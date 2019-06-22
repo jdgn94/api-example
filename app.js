@@ -2,10 +2,20 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 // routes
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
+
+//database config
+mongoose.connect('mongodb://127.0.0.1:27017/products_ejm', {
+  useCreateIndex: true,
+  useNewUrlParser: true,
+  useFindAndModify: false
+})
+.then(db => console.log('DB connected'))
+.catch(err => console.log(err));
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
