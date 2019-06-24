@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const  checkAuth = require('../middelware/check-auth');
 
 const Order = require('../models/orders');
 const Product = require('../models/products');
 
 // get calls
-router.get('/', (req, res, next) => {
+// all orders
+router.get('/', checkAuth, (req, res, next) => {
   Order.find()
   .select('quantity _id')
   .populate('productId', 'name -_id')
@@ -36,7 +38,8 @@ router.get('/', (req, res, next) => {
   });
 });
 
-router.get('/:orderId', (req, res, next) => {
+// order details
+router.get('/:orderId', checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.findById(id)
   .populate('productId', '-_id')
@@ -64,7 +67,8 @@ router.get('/:orderId', (req, res, next) => {
 });
 
 // post call
-router.post('/', (req, res, next) => {
+// order create
+router.post('/', checkAuth, (req, res, next) => {
   Product.findById(req.body.productId)
   .then(product => {
     if (!product) return res.status(404).json({ message: "Product no found" });
@@ -93,7 +97,8 @@ router.post('/', (req, res, next) => {
 });
 
 // delete call
-router.delete('/:orderId', (req, res, next) => {
+// order delete
+router.delete('/:orderId', checkAuth, (req, res, next) => {
   const id = req.params.orderId;
   Order.remove({ _id: id })
   .exec()
